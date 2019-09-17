@@ -36,10 +36,10 @@ class AuthServiceProvider extends ServiceProvider
         // LumenPassport::routes();
         
         $this->app['auth']->viaRequest('api', function ($request) {
-             // echo "hsdih";echo "<pre>"; print_r($request->input('api_token'));exit;//$request->input('api_token'); exit;
-             if ($request->input('api_token')) {
+             //$request->input('api_token'); exit;
+             if ($request->header('Authorization')) {
                 
-                return User::where('api_token', $request->input('api_token'))->first();
+                return User::where('api_token', $request->header('Authorization'))->first();
             }
         });
     }

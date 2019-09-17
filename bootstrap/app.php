@@ -23,8 +23,8 @@ $app = new Laravel\Lumen\Application(
     realpath(__DIR__.'/../')
 );
 
-/*$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
-$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');*/
+$app->instance('path.config', app()->basePath() . DIRECTORY_SEPARATOR . 'config');
+$app->instance('path.storage', app()->basePath() . DIRECTORY_SEPARATOR . 'storage');
 
   $app->withFacades();
 
@@ -52,6 +52,7 @@ $app->singleton(
 );
 $app->configure('auth');
 $app->configure('cors');
+$app->configure('laravel-permission');
 /*
 |--------------------------------------------------------------------------
 | Register Middleware
@@ -63,13 +64,18 @@ $app->configure('cors');
 |
 */
 
-// $app->middleware([
-//    App\Http\Middleware\ExampleMiddleware::class
-// ]);
+  $app->middleware([
+    'api' => App\Http\Middleware\ApiDataLogger::class,
+        App\Http\Middleware\CorsMiddleware::class
+
+  ]);
 
 $app->routeMiddleware([
     'auth' => App\Http\Middleware\Authenticate::class,
     'cors' => \Barryvdh\Cors\HandleCors::class,
+    'permission' => Spatie\Permission\Middlewares\PermissionMiddleware::class,
+    'role'       => Spatie\Permission\Middlewares\RoleMiddleware::class,
+    'role_or_permission'       => Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
 ]);
 
 /*
@@ -92,6 +98,8 @@ $app->routeMiddleware([
     \Dusterio\LumenPassport\LumenPassport::routes($app);
     $app->register(Barryvdh\Cors\ServiceProvider::class);
     $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
+    $app->alias('cache', \Illuminate\Cache\CacheManager::class);  // if you don't have this already
+    $app->register(Spatie\Permission\PermissionServiceProvider::class);
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes
