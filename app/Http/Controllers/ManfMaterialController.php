@@ -27,7 +27,11 @@ class ManfMaterialController extends Controller
 			 "material_name" => "required",
         ]);
          if ($validator->fails()) {
-            return $validator->errors();
+            return response()->json([
+                'status_code'=> 400,
+                'status'=> 'faluire',
+                'error'=>$validator->errors()
+             ]);
         }
         $data["created_by"] = auth()->user('id')->id;
 
@@ -45,17 +49,20 @@ class ManfMaterialController extends Controller
             $ManfMaterialDetailObj -> save();
           
          return response()->json([
-                'message' => 'Material Component Created Succesfully',
-                'status'  => 200,
+                'status_code'  => 200,
+                 'status'=> 'success',
+                 'result' => [
+                    'message' => 'Material Component Created Succesfully'
+                 ]
                 //'last_insert_id' =>  manfVendorMaster::getvendorid()
              ]);
          }
         catch(\Exception $e){
-             return response()->json([
-                'message' => 'Material Component Not Created',
-                'status'  => -1,
-                 
-             ]);
+              return response()->json([
+                'status_code'  => 400,
+                'status'=> 'faluire',
+                'error' => $e->getMessage()   
+            ]);
          }
 
     }
@@ -70,7 +77,11 @@ class ManfMaterialController extends Controller
              "material_type_id" =>  "required",
             ]);
          if ($validator->fails()) {
-            return $validator->errors();
+           return response()->json([
+                'status_code'=> 400,
+                'status'=> 'faluire',
+                'error'=>$validator->errors()
+             ]);
         }
  
         try{
@@ -81,16 +92,19 @@ class ManfMaterialController extends Controller
             $ManfVendorMaterialObj -> save();
           
          return response()->json([
-                'message' => 'Vendor Material Created Succesfully',
-                'status'  => 200,
+                 'status_code'  => 200,
+                 'status'=> 'success',
+                 'result' => [
+                    'message' => 'Vendor Component Created Succesfully'
+                 ]
               ]);
          }
         catch(\Exception $e){
-             return response()->json([
-                'message' => 'vendo Material Not Created',
-                'status'  => -1,
-                 
-             ]);
+              return response()->json([
+                'status_code'  => 400,
+                'status'=> 'faluire',
+                'error' => $e->getMessage()   
+            ]);
          }
 
     }
@@ -103,7 +117,11 @@ class ManfMaterialController extends Controller
              "measuring_type" =>  "required",
             ]);
          if ($validator->fails()) {
-            return $validator->errors();
+            return response()->json([
+                'status_code'=> 400,
+                'status'=> 'faluire',
+                'error'=>$validator->errors()
+             ]);
         }
         $data["created_by"] = auth()->user('id')->id;
 
@@ -116,17 +134,20 @@ class ManfMaterialController extends Controller
             $ManfMaterialTypeObj -> save();
           
          return response()->json([
-                'message' => 'Material Type Created Succesfully',
-                'status'  => 200,
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => [
+                    'message' => 'Material Type Created Succesfully'
+                 ]
                 //'last_insert_id' =>  manfVendorMaster::getvendorid()
              ]);
          }
         catch(\Exception $e){
              return response()->json([
-                'message' => 'Material Type Not Created',
-                'status'  => -1,
-                 
-             ]);
+                'status_code'  => 400,
+                'status'=> 'faluire',
+                'error' => $e->getMessage()   
+            ]);
          }
 
     }

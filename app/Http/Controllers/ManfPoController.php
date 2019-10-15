@@ -33,7 +33,11 @@ class ManfPoController extends Controller
              ]);
 
 	    if ($validator->fails()) {
-            return $validator->errors();
+            return response()->json([
+                'status_code'=> 400,
+                'status'=> 'faluire',
+                'error'=>$validator->errors()
+             ]);
         }
         $data["created_by"] = auth()->user('id')->id;
          
@@ -70,14 +74,18 @@ class ManfPoController extends Controller
             }
 
 	 	     return response()->json([
-	        'message' => 'PO Generated Succesfully',
-	        'status'  => 200
+	           'status_code'  => 200,
+               'status'=> 'success',
+               'result' => [
+                    'message' => 'PO Generated Succesfully'
+                 ]
 	         ]);
 	 	 }
 	    catch(\Exception $e){
 	 	 	 return response()->json([
-	            'message' => 'PO Not Generated',
-	            'status'  => -1
+	            'status_code'  => 400,
+                'status'=> 'faluire',
+                'error' => $e->getMessage()   
 	        ]);
 	 	 }
     }

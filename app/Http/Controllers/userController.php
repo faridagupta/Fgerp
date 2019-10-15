@@ -51,11 +51,21 @@ class userController extends Controller
 
 	           User::where('email', $request->input('email'))->update(['api_token' => "$apikey"]);
 
-	          return response()->json(['status' => 'success','api_token' => $apikey]);
+	          return response()->json([
+               'status_code'  => 200,
+               'status'=> 'success',
+               'result' => [
+                    'api_token' => $apikey
+                 ]
+               ]);
 
 	      }else{
 
-	          return response()->json(['status' => 'fail'],401);
+	          return response()->json([
+                'status_code'=> 400,
+                'status'=> 'faluire',
+                'error'=>$validator->errors()
+             ]);
 
 	      }
 
@@ -117,15 +127,20 @@ class userController extends Controller
      	if($request->input('role')){
      	  $role = Role::create(['name' => $request->input('role')]);
      	  return  response()->json([
-            'message' => $request->input('role') .'Role Created Succesfully',
-            'status'  => 200
+            'status_code'  => 200,
+            'status'=> 'success',
+            'result' => [
+               'message' => $request->input('role') .'Role Created Succesfully',
+             ]
           ]);
          }
          else
          {
          	return  response()->json([
-            'message' => $request->input('role') .'Role Not Created',
-            'status'  => 400
+            'status_code'  => 200,
+            'status'=> 'success',
+            'result' => [
+            'message' => $request->input('role') .'Role Not Created',]
           ]);
          }
      	 
@@ -136,27 +151,38 @@ class userController extends Controller
      	if($request->input('permission')){
      	  $role = Permission::create(['name' => $request->input('permission')]);
      	  return  response()->json([
-            'message' => $request->input('role') .'Permission Created Succesfully',
-            'status'  => 200
+            'status_code'  => 200,
+            'status'=> 'success',
+            'result' => [
+            'message' => $request->input('role') .'Permission Created Succesfully',]
           ]);
          }
          else
          {
          	return  response()->json([
+            'status_code'  => 200,
+            'status'=> 'success',
+            'result' => [
             'message' => $request->input('role') .'Permission Not Created',
-            'status'  => 400
+             ]
           ]);
          }
      }
 
      public function roleHasPermmision(Request $request){
      	  $rl= $request->input('role');
-
+         
      	  $role = Role::findByName("$rl");
-      	  $per = $request->input('permissions');
+      	$per = $request->input('permissions');
      	  $perArray = explode(',', $per);
      	  $role->syncPermissions($perArray);
-          return "Permission assign to role".$request->input('role'); 
+          return  response()->json([
+            'status_code'  => 200,
+            'status'=> 'success',
+            'result' => [
+            'message' =>  "Permission assign to role".$request->input('role')
+          ]
+        ]); 
      }
       public function assignRole(Request $request){
 
@@ -180,15 +206,21 @@ class userController extends Controller
            ]);
             
 	     	  return  response()->json([
-	            'message' => $request->input('role_id') .'Role Assign Succesfully',
-	            'status'  => 200
+	          'status_code'  => 200,
+            'status'=> 'success',
+            'result' => [
+            'message' => $request->input('role_id') .'Role Assign Succesfully',
+	           ]
 	          ]);
          }
          else
          {
          	return  response()->json([
-            'message' => $request->input('role_id') .'Role Not Assign',
-            'status'  => 400
+            'status_code'  => 400,
+            'status'=> 'faluire',
+            'result' => [
+              'message' => $request->input('role_id') .'Role Not Assign',
+            ]
           ]);
          }
      }
@@ -203,15 +235,21 @@ class userController extends Controller
            ]);
             
 	     	  return  response()->json([
+            'status_code'  => 200,
+            'status'=> 'success',
+            'result' => [
 	            'message' => $request->input('permission_id') .'Permission Assign Succesfully',
-	            'status'  => 200
+	            ]
 	          ]);
          }
          else
          {
          	return  response()->json([
+            'status_code'  => 400,
+            'status'=> 'faluire',
+            'result' => [
             'message' => $request->input('permission_id') .'Permission Not Assign',
-            'status'  => 400
+            ]
           ]);
          }
      }

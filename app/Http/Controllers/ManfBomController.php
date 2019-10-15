@@ -23,7 +23,11 @@ class ManfBomController extends Controller
              ]);
 
 	    if ($validator->fails()) {
-            return $validator->errors();
+            return response()->json([
+                'status_code'=> 400,
+                'status'=> 'faluire',
+                'error'=>$validator->errors()
+             ]);
         }
         $data["created_by"] = auth()->user('id')->id;
 	    try{
@@ -49,14 +53,18 @@ class ManfBomController extends Controller
             }
 		     
 	 	     return response()->json([
-	        'message' => 'Bom Created Succesfully',
-	        'status'  => 200
+	             'status_code'  => 200,
+                 'status'=> 'success',
+                 'result' => [
+                    'message' => 'Bom Created Succesfully'
+                 ]
 	         ]);
 	 	 }
 	    catch(\Exception $e){
 	 	 	 return response()->json([
-	            'message' => 'Bom Not Added',
-	            'status'  => -1
+	            'status_code'  => 400,
+                'status'=> 'faluire',
+                'error' => $e->getMessage()   
 	        ]);
 	 	 }
     }
