@@ -26,6 +26,7 @@ class ManfMaterialController extends Controller
              "material_img" => "required",
 			 "material_name" => "required",
         ]);
+        
          if ($validator->fails()) {
             return response()->json([
                 'status_code'=> 400,
