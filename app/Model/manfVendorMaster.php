@@ -35,4 +35,18 @@ class manfVendorMaster extends Model
     {
         return $this->belongsTo('App\Model\manfVendorDetails', 'vendor_id', 'entity_id');
     }
+
+    static function getVendorNames(){
+      $vendorName = manfVendorMaster::select('entity_id','vendor_name')
+        ->get();
+        $data = array();
+    
+        if (!empty($vendorName)) {
+            foreach ($vendorName as $value) {
+                $data['vendor_name'][$value['entity_id']] = $value['vendor_name'];
+            }
+        }
+
+        return $data;
+    }
 }

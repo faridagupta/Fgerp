@@ -25,7 +25,7 @@ class ManfBomController extends Controller
 	    if ($validator->fails()) {
             return response()->json([
                 'status_code'=> 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error'=>$validator->errors()
              ]);
         }
@@ -34,11 +34,11 @@ class ManfBomController extends Controller
  
 		    $ManfProductStyleBomObj =  new ManfProductStyleBom;
 			$ManfProductStyleBomObj -> style_id = $data["style_id"];
+			$ManfProductStyleBomObj -> bom = 'BOM - '. $ManfProductStyleBomObj->id;
 			$ManfProductStyleBomObj -> created_by = $data["created_by"];
 	        $ManfProductStyleBomObj -> save();
   
                $bomId = ManfProductStyleBom::getBomId();
-               print_r($data['bom_material']);
 	        
             if(!empty($data['bom_material'])){
                foreach ($data['bom_material'] as $key => $value) {
@@ -63,7 +63,7 @@ class ManfBomController extends Controller
 	    catch(\Exception $e){
 	 	 	 return response()->json([
 	            'status_code'  => 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error' => $e->getMessage()   
 	        ]);
 	 	 }

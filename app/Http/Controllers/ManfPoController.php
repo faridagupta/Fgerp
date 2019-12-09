@@ -19,24 +19,24 @@ class ManfPoController extends Controller
 	    $data = json_decode(json_encode($request->input()), true);
 	    
 	    $validator = Validator::make($data, [
-            "order_date" => 'required',
-            "payment_term" => 'required',
-            "delivery_date" => 'required',
-            "delivery_address" => 'required',
-            "vendor_name" => 'required',
-            "material_type" => 'required',
-            "material_detail" => 'required',
+            "order_date"        => 'required',
+            "payment_term"      => 'required',
+            "delivery_date"     => 'required',
+            "delivery_address"  => 'required',
+            "vendor_name"       => 'required',
+            "material_type"     => 'required',
+            "material_detail"   => 'required',
             //"purchase_material" => 'required',
             //"item_description" => 'required',
-            "contact_person" => 'required',
-            "account_person" => 'required'
+            "contact_person"    => 'required',
+            "account_person"    => 'required'
              ]);
 
 	    if ($validator->fails()) {
             return response()->json([
                 'status_code'=> 400,
-                'status'=> 'faluire',
-                'error'=>$validator->errors()
+                'status'     => 'failure',
+                'error'      =>$validator->errors()
              ]);
         }
         $data["created_by"] = auth()->user('id')->id;
@@ -75,17 +75,17 @@ class ManfPoController extends Controller
 
 	 	     return response()->json([
 	           'status_code'  => 200,
-               'status'=> 'success',
-               'result' => [
-                    'message' => 'PO Generated Succesfully'
+               'status'       => 'success',
+               'result'       => [
+                                'message' => 'PO Generated Succesfully'
                  ]
 	         ]);
 	 	 }
 	    catch(\Exception $e){
 	 	 	 return response()->json([
 	            'status_code'  => 400,
-                'status'=> 'faluire',
-                'error' => $e->getMessage()   
+                'status'       => 'failure',
+                'error'        => $e->getMessage()   
 	        ]);
 	 	 }
     }

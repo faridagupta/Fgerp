@@ -6,6 +6,7 @@ use App\Model\manfVendorMaster;
 use App\Model\manfVendorDetails;
 use App\Model\manfVendorBankDetails;
 use App\Model\manfVendorDocs;
+use App\Model\ManfState;
 use Illuminate\Support\Facades\Validator;
 
 class ManufacturingController extends Controller
@@ -57,7 +58,11 @@ class ManufacturingController extends Controller
             ]);
         
         if ($validator->fails()) {
-            return $validator->errors();
+             return response()->json([
+                'status_code'=> 400,
+                'status'=> 'failure',
+                'error'=>$validator->errors()
+             ]);
         }
 
         $data["created_by"] = auth()->user('id')->id;
@@ -120,16 +125,21 @@ class ManufacturingController extends Controller
             $vendorDocsObj -> save();
             
              return response()->json([
-                'message' => 'Vendor Added Succesfully',
-                'status'  => 200,
+                    'status_code'  => 200,
+                    'status'=> 'success',
+                    'result' => [
+                                'message' => 'Vendor Created Succesfully'
+                     ]
                 //'last_insert_id' =>  manfVendorMaster::getvendorid()
              ]);
          }
         catch(\Exception $e){
              return response()->json([
-                'message' => 'Vendor Not Added',
-                'status'  => -1,
-                 
+                    'status_code'  => 400,
+                    'status'=> 'success',
+                    'result' => [
+                                 'message' => 'Vendor Not Created Succesfully'
+                    ]
              ]);
          }
          /*foreach ($data as $key => $value) {
@@ -160,6 +170,40 @@ class ManufacturingController extends Controller
 */
 
     }
-    //
+    //Get function Call
+
+    public function getVendorName(){
+      
+      $data = manfVendorMaster::getVendorNames();
+
+      if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => 'Vendor Not Found'
+             ]);
+        }
+
+    }
+
+    public function vendorDetails(){
+        $vendorName = manfVendorMaster::getVendorNames();
+        $accountPerson = array(
+          "person1" => array("name" =>"vikas", "mobile" =>892387937, "email"=> "vikas@faridagupta.com" ),
+          "person2" => array("name" =>"vikas2", "mobile" =>8923879322, "email"=> "vikas2@faridagupta.com" ),
+        );
+        $stateCode = ManfState::getState();
+        
+
+    }
 }
 

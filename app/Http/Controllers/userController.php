@@ -63,7 +63,7 @@ class userController extends Controller
 
 	          return response()->json([
                 'status_code'=> 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error'=>$validator->errors()
              ]);
 
@@ -137,8 +137,8 @@ class userController extends Controller
          else
          {
          	return  response()->json([
-            'status_code'  => 200,
-            'status'=> 'success',
+            'status_code'  => 400,
+            'status'=> 'failure',
             'result' => [
             'message' => $request->input('role') .'Role Not Created',]
           ]);
@@ -160,8 +160,8 @@ class userController extends Controller
          else
          {
          	return  response()->json([
-            'status_code'  => 200,
-            'status'=> 'success',
+            'status_code'  => 400,
+            'status'=> 'failure',
             'result' => [
             'message' => $request->input('role') .'Permission Not Created',
              ]
@@ -246,7 +246,7 @@ class userController extends Controller
          {
          	return  response()->json([
             'status_code'  => 400,
-            'status'=> 'faluire',
+            'status'=> 'failure',
             'result' => [
             'message' => $request->input('permission_id') .'Permission Not Assign',
             ]

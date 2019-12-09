@@ -5,6 +5,8 @@ use Illuminate\Http\Request;
 use App\Model\ManfMaterialDetail;
 use App\Model\ManfMaterialType;
 use App\Model\ManfVendorMaterial;
+use App\Model\ManfBomMaterial;
+use App\Model\ManfMaterialEnter;
 use Illuminate\Support\Facades\Validator;
 
 class ManfMaterialController extends Controller
@@ -18,20 +20,23 @@ class ManfMaterialController extends Controller
     { 
     	$data = json_decode(json_encode($request->input()), true);
         $validator = Validator::make($data, [
-             "material_code" => "required",
-			 "material_type" =>  "required",
-			 "composition" =>  "required",
-             "color" => "required",
-             "test_report" => "required",
-             "material_img" => "required",
-			 "material_name" => "required",
+             "material_code"  => "required",
+			 "material_type"  =>  "required",
+			 "composition"    =>  "required",
+             "color"          => "required",
+             "test_report"    => "required",
+             "material_img"   => "required",
+             "material_name"  => "required",
+             "rate"           => "required",
+             "measuring_type" => "required",
+			 "vendor"         => "required",
         ]);
         
          if ($validator->fails()) {
             return response()->json([
-                'status_code'=> 400,
-                'status'=> 'faluire',
-                'error'=>$validator->errors()
+                'status_code' => 400,
+                'status'      => 'failure',
+                'error'       =>$validator->errors()
              ]);
         }
         $data["created_by"] = auth()->user('id')->id;
@@ -43,12 +48,14 @@ class ManfMaterialController extends Controller
             $ManfMaterialDetailObj -> material_type = $data["material_type"];
             $ManfMaterialDetailObj -> composition = $data["composition"];
             $ManfMaterialDetailObj -> color = $data["color"];
-            $ManfMaterialDetailObj -> test_report = $data["test_report"];
+            $ManfMaterialDetailObj -> test_report = json_encode($data["test_report"]);
             $ManfMaterialDetailObj -> material_img = $data["material_img"];
             $ManfMaterialDetailObj -> material_name = $data["material_name"];
+            $ManfMaterialDetailObj -> rate = $data["rate"];
+            $ManfMaterialDetailObj -> measuring_type = $data["measuring_type"];
+            $ManfMaterialDetailObj -> vendor = $data["vendor"];
             $ManfMaterialDetailObj -> created_by = $data["created_by"];
             $ManfMaterialDetailObj -> save();
-          
          return response()->json([
                 'status_code'  => 200,
                  'status'=> 'success',
@@ -61,7 +68,7 @@ class ManfMaterialController extends Controller
         catch(\Exception $e){
               return response()->json([
                 'status_code'  => 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error' => $e->getMessage()   
             ]);
          }
@@ -80,7 +87,7 @@ class ManfMaterialController extends Controller
          if ($validator->fails()) {
            return response()->json([
                 'status_code'=> 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error'=>$validator->errors()
              ]);
         }
@@ -103,7 +110,7 @@ class ManfMaterialController extends Controller
         catch(\Exception $e){
               return response()->json([
                 'status_code'  => 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error' => $e->getMessage()   
             ]);
          }
@@ -120,7 +127,7 @@ class ManfMaterialController extends Controller
          if ($validator->fails()) {
             return response()->json([
                 'status_code'=> 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error'=>$validator->errors()
              ]);
         }
@@ -146,10 +153,153 @@ class ManfMaterialController extends Controller
         catch(\Exception $e){
              return response()->json([
                 'status_code'  => 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error' => $e->getMessage()   
             ]);
          }
 
     }
+
+    public function getmaterialType(){
+
+        $data = ManfMaterialDetail::getMaterialNameType();
+
+        if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => 'Material Not Found'
+             ]);
+        }
+    }
+
+    public function getMaterialName(){
+        $data = ManfMaterialDetail::getMaterialNames();
+
+        if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => 'Material Not Found'
+             ]);
+        }
+    }
+
+    public function getMaterialComposition(){
+        $data = ManfMaterialDetail::getMaterialCompositions();
+
+        if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => 'Material Not Found'
+             ]);
+        }
+    }
+
+     public function getMaterialQty(Request $request){
+        
+
+        $data = json_decode(json_encode($request->input()), true);
+
+        $validator = Validator::make($data, [
+             "material_id"       => "required"
+            ]);
+
+         if ($validator->fails()) {
+            return response()->json([
+                'status_code'   => 400,
+                'status'        => 'failure',
+                'error'         =>$validator->errors()
+             ]);
+        }
+        $value =array();
+        $value['tot_qty']     = ManfMaterialDetail::getMaterialQty($data['material_id']);
+        $material_in_qty      = ManfMaterialEnter::getMaterialRecived($data['material_id']);
+        if($material_in_qty!="")
+        $value['stock_left'] = $material_in_qty['qty_recived'];
+        $value['qty_used']    = 0;
+        //dd($value);
+
+        if(!empty($value)){
+        return response()->json([
+                'status_code'   => 200,
+                'status'        => 'success',
+                'result'        =>  [$value]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'   => 400,
+                'status'        => 'failure',
+                'error'         => 'Material Not Found'
+             ]);
+        }
+    }
+    
+    public function getmaterialDetails(Request $request){
+
+        $data = json_decode(json_encode($request->input()), true);
+        $validator = Validator::make($data, [
+             "vendor_id" => "required",
+            ]);
+         
+         if ($validator->fails()) {
+            return response()->json([
+                'status_code'   => 400,
+                'status'        => 'failure',
+                'error'         =>$validator->errors()
+             ]);
+        } 
+        
+        $vendorData = ManfMaterialDetail::getMaterialDetail($data['vendor_id']);
+         
+        if(!empty($vendorData)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'       => 'success',
+                'result'       => 
+                  [$vendorData]                 
+             ]);
+        } else {
+             return response()->json([
+                'status_code'  => 400,
+                'status'       => 'failure',
+                'error'        => 'Material Detail Not Found'
+             ]);
+        }
+
+        
+    }
+    
+
+
 }

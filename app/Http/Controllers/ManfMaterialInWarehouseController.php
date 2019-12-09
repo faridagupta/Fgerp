@@ -29,7 +29,7 @@ class ManfMaterialInWarehouseController extends Controller
 	    if ($validator->fails()) {
             return response()->json([
                 'status_code'=> 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error'=>$validator->errors()
              ]);
         }
@@ -70,7 +70,7 @@ class ManfMaterialInWarehouseController extends Controller
 	    catch(\Exception $e){
 	 	 	 return response()->json([
 	           'status_code'  => 400,
-                'status'=> 'faluire',
+                'status'=> 'failure',
                 'error' => $e->getMessage()   
 	        ]);
 	 	 }

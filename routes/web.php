@@ -35,7 +35,7 @@ $app->group(['middleware' => 'auth:api'], function($app)
     $app->post('/assignrolepermission', 'userController@roleHasPermmision');
     //$app->post('/createvendor', 'ManufacturingController@createVendor');
     $app->post('/add-delivery-address', 'ManfPoController@addDeliveryAddress');
-    $app->post('/create-style', 'ManfStyleController@createStyle');
+    $app->post('/manufacturing-style', 'ManfStyleController@manufacturingStyle');
     $app->post('/create-story', 'ManfStyleController@createStory');
     $app->post('/create-bom', 'ManfBomController@createBom');
     $app->post('/create-product-style-bom', 'ManfBomController@productStyleBom');
@@ -44,7 +44,9 @@ $app->group(['middleware' => 'auth:api'], function($app)
     $app->post('/vendor-material', 'ManfMaterialController@vendorMaterial');
     $app->post('/generate-po', 'ManfPoController@generatePo');
     $app->post('/material-in-warehouse', 'ManfMaterialInWarehouseController@MaterialInWarehouse');
-
+    $app->post('/get-material-detail', 'ManfMaterialController@getmaterialDetails');
+    $app->post('/get-material-qty', 'ManfMaterialController@getMaterialQty');
+    $app->post('/create-style', 'ManfStyleController@createStyle');
 
 
     $app->group(['middleware' => ['role:Admin']], function ($app) {
@@ -91,6 +93,17 @@ $app->group(['middleware' => 'auth:api'], function($app)
         ]);
     });
     $app->post('/login', 'userController@login');
+
+    // Get Api For Manufacturing ERP
+
+    $app->get('/get-style', 'ManfStyleController@getStyles');
+    $app->get('/get-bom', 'ManfStyleController@getBom');
+    $app->get('/get-story', 'ManfStyleController@getStory');
+    $app->get('/get-material-type', 'ManfMaterialController@getmaterialType');
+    $app->get('/get-material-name', 'ManfMaterialController@getMaterialName');
+    $app->get('/get-material-composition', 'ManfMaterialController@getMaterialComposition');
+    $app->get('/get-vendor-name', 'ManufacturingController@getVendorName');
+    
 
 });
 
