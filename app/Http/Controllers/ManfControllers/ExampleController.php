@@ -1,6 +1,7 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ManfControllers;
+use App\Http\Controllers\Controller;
 
 class ExampleController extends Controller
 {
@@ -14,5 +15,7 @@ class ExampleController extends Controller
         //
     }
 
-    //
+    public function index(){
+        return "ExampleController";
+    }
 }

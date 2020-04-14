@@ -1,12 +1,13 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\ManfControllers;
 use Illuminate\Http\Request;
 use App\Model\ManfProductStyle;
 use App\Model\ManfProductStyleBom;
 use App\Model\ManfStoryMaster;
 use App\Model\Manufacturing\ManfStyleMaster;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\Controller;
 
 class ManfStyleController extends Controller
 {

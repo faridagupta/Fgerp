@@ -21,45 +21,46 @@ $app->get('test', function () {
     //return 'Hello World'; 
 });
 
-$app->post('postlogin', 'ExampleController@postLogin');
-$app->post('/register', 'userController@register');
 
-$app->post('/authenticate', 'userController@authenticate');
+$app->post('postlogin', 'ExampleController@postLogin');
+$app->post('/register', 'ManfControllers\userController@register');
+
+$app->post('/authenticate', 'ManfControllers\userController@authenticate');
 
 $app->group(['middleware' => 'auth:api'], function($app)
 {
-    $app->post('/createrole', 'userController@createRole');
-    $app->post('/createpermission', 'userController@createPermission');
-    $app->post('/assignrole', 'userController@assignRole');
-    $app->post('/assignpermission', 'userController@assignPermission');
-    $app->post('/assignrolepermission', 'userController@roleHasPermmision');
-    $app->post('/create-component', 'userController@createComponent');
+    $app->post('/createrole', 'ManfControllers\userController@createRole');
+    $app->post('/createpermission', 'ManfControllers\userController@createPermission');
+    $app->post('/assignrole', 'ManfControllers\userController@assignRole');
+    $app->post('/assignpermission', 'ManfControllers\userController@assignPermission');
+    $app->post('/assignrolepermission', 'ManfControllers\userController@roleHasPermmision');
+    $app->post('/create-component', 'ManfControllers\userController@createComponent');
     //$app->post('/createvendor', 'ManufacturingController@createVendor');
-    $app->post('/add-delivery-address', 'ManfPoController@addDeliveryAddress');
-    $app->post('/manufacturing-style', 'ManfStyleController@manufacturingStyle');
-    $app->post('/create-story', 'ManfStyleController@createStory');
-    $app->post('/create-bom', 'ManfBomController@createBom');
-    $app->post('/create-product-style-bom', 'ManfBomController@productStyleBom');
-    $app->post('/create-material', 'ManfMaterialController@createMaterial');
-    $app->post('/material-type', 'ManfMaterialController@materialType');
-    $app->post('/vendor-material', 'ManfMaterialController@vendorMaterial');
-    $app->post('/generate-po', 'ManfPoController@generatePo');
-    $app->post('/material-in-warehouse', 'ManfMaterialInWarehouseController@MaterialInWarehouse');
-    $app->post('/get-material-detail', 'ManfMaterialController@getmaterialDetails');
-    $app->post('/get-material-qty', 'ManfMaterialController@getMaterialQty');
-    $app->post('/create-style', 'ManfStyleController@createStyle');
-    $app->post('/po-details', 'ManfPoController@poDetails');
-    $app->post('/material-code-bytype', 'ManfMaterialController@materialCodeByType');
-    $app->post('/material-test', 'ManfMaterialController@materialTest');
-    $app->post('/create-material-type', 'ManfMaterialController@createMaterialType');
-    $app->post('/create-admin-rule', 'userController@createAdminRule');
+    $app->post('/add-delivery-address', 'ManfControllers\ManfPoController@addDeliveryAddress');
+    $app->post('/manufacturing-style', 'ManfControllers\ManfStyleController@manufacturingStyle');
+    $app->post('/create-story', 'ManfControllers\ManfStyleController@createStory');
+    $app->post('/create-bom', 'ManfControllers\ManfBomController@createBom');
+    $app->post('/create-product-style-bom', 'ManfControllers\ManfBomController@productStyleBom');
+    $app->post('/create-material', 'ManfControllers\ManfMaterialController@createMaterial');
+    $app->post('/material-type', 'ManfControllers\ManfMaterialController@materialType');
+    $app->post('/vendor-material', 'ManfControllers\ManfMaterialController@vendorMaterial');
+    $app->post('/generate-po', 'ManfControllers\ManfPoController@generatePo');
+    $app->post('/material-in-warehouse', 'ManfControllers\ManfMaterialInWarehouseController@MaterialInWarehouse');
+    $app->post('/get-material-detail', 'ManfControllers\ManfMaterialController@getmaterialDetails');
+    $app->post('/get-material-qty', 'ManfControllers\ManfMaterialController@getMaterialQty');
+    $app->post('/create-style', 'ManfControllers\ManfStyleController@createStyle');
+    $app->post('/po-details', 'ManfControllers\ManfPoController@poDetails');
+    $app->post('/material-code-bytype', 'ManfControllers\ManfMaterialController@materialCodeByType');
+    $app->post('/material-test', 'ManfControllers\ManfMaterialController@materialTest');
+    $app->post('/create-material-type', 'ManfControllers\ManfMaterialController@createMaterialType');
+    $app->post('/create-admin-rule', 'ManfControllers\userController@createAdminRule');
 
 
 
     $app->group(['middleware' => ['role:Admin']], function ($app) {
 
       //$app->post('/createrole', 'userController@createRole');
-      $app->post('/createvendor', 'ManufacturingController@createVendor');
+      $app->post('/createvendor', 'ManfControllers\ManufacturingController@createVendor');
 
     });
 
@@ -103,23 +104,23 @@ $app->group(['middleware' => 'auth:api'], function($app)
 
     // Get Api For Manufacturing ERP
 
-    $app->get('/get-style', 'ManfStyleController@getStyles');
-    $app->get('/get-bom', 'ManfStyleController@getBom');
-    $app->get('/get-story', 'ManfStyleController@getStory');
-    $app->get('/get-material-name-type', 'ManfMaterialController@getMaterialNameType');
-    $app->get('/get-material-name', 'ManfMaterialController@getMaterialName');
-    $app->get('/get-material-composition', 'ManfMaterialController@getMaterialComposition');
-    $app->get('/get-vendor-name', 'ManufacturingController@getVendorName');
-    $app->get('/po-list', 'ManfPoController@poLists');
-    $app->get('/get-material-code', 'ManfMaterialController@getMaterialCode');
-    $app->get('/get-material-type', 'ManfMaterialController@getMaterialType');
-    $app->get('/get-state-code', 'ManufacturingController@getStateCode');
-    $app->get('/get-bank-name', 'ManufacturingController@getBankName');
+    $app->get('/get-style', 'ManfControllers\ManfStyleController@getStyles');
+    $app->get('/get-bom', 'ManfControllers\ManfStyleController@getBom');
+    $app->get('/get-story', 'ManfControllers\ManfStyleController@getStory');
+    $app->get('/get-material-name-type', 'ManfControllers\ManfMaterialController@getMaterialNameType');
+    $app->get('/get-material-name', 'ManfControllers\ManfMaterialController@getMaterialName');
+    $app->get('/get-material-composition', 'ManfControllers\ManfMaterialController@getMaterialComposition');
+    $app->get('/get-vendor-name', 'ManfControllers\ManufacturingController@getVendorName');
+    $app->get('/po-list', 'ManfControllers\ManfPoController@poLists');
+    $app->get('/get-material-code', 'ManfControllers\ManfMaterialController@getMaterialCode');
+    $app->get('/get-material-type', 'ManfControllers\ManfMaterialController@getMaterialType');
+    $app->get('/get-state-code', 'ManfControllers\ManufacturingController@getStateCode');
+    $app->get('/get-bank-name', 'ManfControllers\ManufacturingController@getBankName');
     
      //Api for view in ERP
-    $app->get('/get-style-list[/{style}]','ManfStyleController@getStylesList');
-
-
+    $app->get('/get-style-list[/{style}]','ManfControllers\ManfStyleController@getStylesList');
+$app->get('/example','ManfControllers\ExampleController@index');
+    
 });
 
 
@@ -144,3 +145,5 @@ $api->version('v1', function($api){
 		});
 	});
 });
+
+
