@@ -115,7 +115,7 @@ class ManfStyleController extends Controller
     	$data = json_decode(json_encode($request->input()), true);
     	 
         $validator = Validator::make($data, [
-             "vendor_id" => "required|numeric",
+             //"vendor_id" => "required|numeric",
 			 "story_name" =>  "required",
         ]);
          if ($validator->fails()) {
@@ -131,7 +131,7 @@ class ManfStyleController extends Controller
         try{
 
             $ManfStoryObj =  new ManfStoryMaster;
-            $ManfStoryObj -> vendor_id = $data["vendor_id"];
+            //$ManfStoryObj -> vendor_id = $data["vendor_id"];
             $ManfStoryObj -> story_name = $data["story_name"];
             $ManfStoryObj -> created_by = $data["created_by"];
             $ManfStoryObj -> save();
@@ -158,6 +158,7 @@ class ManfStyleController extends Controller
 
     public function getStyles(Request $request){
         $data = ManfStyleMaster::getStyle();
+        // $data = ManfStyleMaster::getStyle();
         if(!empty($data)){
         return response()->json([
                 'status_code'  => 200,
@@ -214,6 +215,19 @@ class ManfStyleController extends Controller
                 'status_code'  => 400,
                 'status'=> 'faluire',
                 'error' => 'Story Not Found'
+             ]);
+        }
+     }
+
+     public function getStylesList($style = ""){
+        $data = ManfProductStyle::getStyleLists($style);
+        
+        if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
              ]);
         }
      }

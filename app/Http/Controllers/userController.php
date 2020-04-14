@@ -11,6 +11,9 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use App\Model\AdminRule;
+use Dashboard\Classes\Helpers\Utility;
 
 
 class userController extends Controller
@@ -47,24 +50,38 @@ class userController extends Controller
            //echo  "===".Crypt::decrypt($user->password)  ."---". $request->input('password');exit;
 	        if( Crypt::decrypt($user->password)==$request->input('password')){
               
-	           $apikey = $this->get_access_token();
+	            echo $apikey = self::get_access_token();
+               
+              return 98;
+	          // User::where('email', $request->input('email'))->update(['api_token' => "$apikey"]);
+            // $role =  DB::table('user_has_roles')->select('role_id')->where('user_id',$user->id)->first();
+              
+             // if(!empty($role))
+             // $details =  DB::table('admin_rule')->select('role_id','component','module','resource','permission')->where('role_id',$role->role_id)->get();
+             // else
+             // {
+              return response()->json([
+                'status_code'=> 201,
+                'status'=> 'success',
+                'result'=> 'Login Successfully, Please assign a role'
+             ]);
+            // }
 
-	           User::where('email', $request->input('email'))->update(['api_token' => "$apikey"]);
-
-	          return response()->json([
+ 	          return response()->json([
                'status_code'  => 200,
                'status'=> 'success',
                'result' => [
-                    'api_token' => $apikey
+                    'api_token' => env('api_token'),
+                    'access_details'      => $details//[{"name": "style","resource" : "manfacturing/style", "permission":"1"}],
                  ]
                ]);
 
 	      }else{
 
 	          return response()->json([
-                'status_code'=> 400,
+                'status_code'=> 201,
                 'status'=> 'failure',
-                'error'=>$validator->errors()
+                'error'=> 'password incorrect'
              ]);
 
 	      }
@@ -73,17 +90,17 @@ class userController extends Controller
 
     public static function get_access_token()
 	{
-        
+    return 23;
 			$client = new GuzzleHttp\Client;
-			$response = $client->request('POST', 'http://fgerp.faridagupta.com/oauth/token', [
+			$response = $client->request('POST', env('APP_URL').'/oauth/token', [
 	        'form_params' => [
 						'grant_type' => 'client_credentials',
-						'client_id'  => '3',
+						'client_id'  => '9',
 						'scope' => '*',
-						'client_secret' => 'hLojgh5504zSpvrGOPeqJ43JIxSL3LTHcRgnPht4',
+						'client_secret' => 'lkm9eQqv4bTFWSDlVig8qx5L7oQanKjuywg4FMzf',
 						],
 	         ]);
-
+       
 	       $result= json_decode((string) $response->getBody(), true);
 	        
 
@@ -253,6 +270,99 @@ class userController extends Controller
           ]);
          }
      }
+     
+     public function createAdminRule(Request $request){
+      $data = json_decode(json_encode($request->input()), true);
+//return $data;
+       $validator = Validator::make($data, [
+              'role_id'   => 'required',
+              'role_name' => 'required',
+              'component' => 'required',
+              'module'    => 'required',
+              //'resource'  => 'required'
+          ]);
+ 
+        if ($validator->fails()) {
+             return response()->json([
+                'status_code'=> 400,
+                'status'=> 'failure',
+                'error'=>$validator->errors()
+             ]);
+        }
+         
+        try{
+            
 
+            foreach ($data['component'] as $key => $value) {
+              $adminRuleObj =  new AdminRule;
+              $adminRuleObj -> role_id    = $data["role_id"];
+              $adminRuleObj -> role_name  = $data["role_name"];
+              $adminRuleObj -> module     = $data["module"];
+              $adminRuleObj -> component  = $value["name"];
+              $adminRuleObj -> resource   = $value["resource"]; 
+              $adminRuleObj -> permission = $value["permission"];
+              $adminRuleObj -> save();
+            }
+             
+           return response()->json([
+                    'status_code'  => 200,
+                    'status'=> 'success',
+                    'result' => [
+                                'message' => 'Admin Rule Created Succesfully'
+                     ]
+             ]);
+         }
+        catch(\Exception $e){
+             return response()->json([
+                    'status_code'  => 400,
+                    'status'=> 'success',
+                    'result' => [
+                                 'message' => 'Admin Rule Not Created Succesfully'
+                    ]
+             ]);
+         }
+      
+     }
+
+
+    public function createComponent(Request $request){
+      $data = json_decode(json_encode($request->input()), true);
+       $validator = Validator::make($data, [
+              'component'   => 'required',
+              'module' => 'required',
+          ]);
+        
+        if ($validator->fails()) {
+             return response()->json([
+                'status_code'=> 400,
+                'status'=> 'failure',
+                'error'=>$validator->errors()
+             ]);
+        }
+        try{
+            
+          DB::table('erp_component')->insert([
+            'component' => $data['component'],
+            'module' => $data['module']
+           ]);
+          return response()->json([
+                    'status_code'  => 200,
+                    'status'=> 'success',
+                    'result' => [
+                    'message' => 'component Created Succesfully'
+                     ]
+             ]);
+        }
+        catch(\Exception $e){
+             return response()->json([
+                    'status_code'  => 400,
+                    'status'=> 'success',
+                    'result' => [
+                                 'message' => 'component Not Created Succesfully'
+                    ]
+             ]);
+         }
+       
+    }
      
 }

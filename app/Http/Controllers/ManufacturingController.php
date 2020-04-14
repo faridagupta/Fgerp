@@ -8,6 +8,7 @@ use App\Model\manfVendorBankDetails;
 use App\Model\manfVendorDocs;
 use App\Model\ManfState;
 use Illuminate\Support\Facades\Validator;
+use DB;
 
 class ManufacturingController extends Controller
 {
@@ -205,5 +206,62 @@ class ManufacturingController extends Controller
         
 
     }
+
+    public function getStateCode(){
+
+        $statecode = DB::table('state_master')->get();
+        $data = array();
+
+        foreach ($statecode as $key => $value) {
+          $data['statecode'][] = array('state'=>$value->state, 'state_code'=>$value->state_code);
+        }
+        
+        if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => 'state Not Found'
+             ]);
+        }
+
+    }
+    
+    public function getBankName(){
+
+        $statecode = DB::table('bank_master')->get();
+        $data = array();
+
+        foreach ($statecode as $key => $value) {
+          $data['bank_name'][] = array('name'=>$value->bank_name);
+        }
+        
+        if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => 'state Not Found'
+             ]);
+        }
+
+    }
+    
 }
 

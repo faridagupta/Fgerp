@@ -41,6 +41,21 @@ class ManfMaterialDetail extends Model
         return $data;
     }
 
+    static function getMaterialType(){
+
+        $mttype = ManfMaterialDetail::select('material_type')->distinct()
+        ->get();
+        $data = array();
+        $data['material_type'] = array();
+        if (!empty($mttype)) {
+            foreach ($mttype as $value) {
+                $data['material_type'][] = $value['material_type'];
+            }
+        }
+
+        return $data;
+    }
+
     static function getMaterialCompositions(){
 
     	$mtname = ManfMaterialDetail::select('composition')->distinct()
@@ -87,5 +102,25 @@ class ManfMaterialDetail extends Model
         }
 
         return $data;
+    }
+    
+    static function getMaterialCodebyType($materialType){
+
+        $mtname = ManfMaterialDetail::select('material_code')->where('material_type', '=', $materialType)->distinct()
+        ->get();
+
+        $data = array();
+        $data['material_code'] = array();
+        if (!empty($mtname)) {
+            foreach ($mtname as $value) {
+                $data['material_code'][] = $value['material_code'];
+            }
+        }
+        return $data;
+    }
+
+    static function updateTestReport($data){
+        $updateReport = ManfMaterialDetail::where('material_type','=',$data['material_type'])->where('material_name', '=',$data['material_name'] )->update(array('test_report'=> json_encode($data["test_report"])));
+        return $updateReport;
     }
 }

@@ -33,6 +33,7 @@ $app->group(['middleware' => 'auth:api'], function($app)
     $app->post('/assignrole', 'userController@assignRole');
     $app->post('/assignpermission', 'userController@assignPermission');
     $app->post('/assignrolepermission', 'userController@roleHasPermmision');
+    $app->post('/create-component', 'userController@createComponent');
     //$app->post('/createvendor', 'ManufacturingController@createVendor');
     $app->post('/add-delivery-address', 'ManfPoController@addDeliveryAddress');
     $app->post('/manufacturing-style', 'ManfStyleController@manufacturingStyle');
@@ -47,6 +48,12 @@ $app->group(['middleware' => 'auth:api'], function($app)
     $app->post('/get-material-detail', 'ManfMaterialController@getmaterialDetails');
     $app->post('/get-material-qty', 'ManfMaterialController@getMaterialQty');
     $app->post('/create-style', 'ManfStyleController@createStyle');
+    $app->post('/po-details', 'ManfPoController@poDetails');
+    $app->post('/material-code-bytype', 'ManfMaterialController@materialCodeByType');
+    $app->post('/material-test', 'ManfMaterialController@materialTest');
+    $app->post('/create-material-type', 'ManfMaterialController@createMaterialType');
+    $app->post('/create-admin-rule', 'userController@createAdminRule');
+
 
 
     $app->group(['middleware' => ['role:Admin']], function ($app) {
@@ -99,11 +106,19 @@ $app->group(['middleware' => 'auth:api'], function($app)
     $app->get('/get-style', 'ManfStyleController@getStyles');
     $app->get('/get-bom', 'ManfStyleController@getBom');
     $app->get('/get-story', 'ManfStyleController@getStory');
-    $app->get('/get-material-type', 'ManfMaterialController@getmaterialType');
+    $app->get('/get-material-name-type', 'ManfMaterialController@getMaterialNameType');
     $app->get('/get-material-name', 'ManfMaterialController@getMaterialName');
     $app->get('/get-material-composition', 'ManfMaterialController@getMaterialComposition');
     $app->get('/get-vendor-name', 'ManufacturingController@getVendorName');
+    $app->get('/po-list', 'ManfPoController@poLists');
+    $app->get('/get-material-code', 'ManfMaterialController@getMaterialCode');
+    $app->get('/get-material-type', 'ManfMaterialController@getMaterialType');
+    $app->get('/get-state-code', 'ManufacturingController@getStateCode');
+    $app->get('/get-bank-name', 'ManufacturingController@getBankName');
     
+     //Api for view in ERP
+    $app->get('/get-style-list[/{style}]','ManfStyleController@getStylesList');
+
 
 });
 
@@ -118,9 +133,9 @@ $app->get('/callback', 'ExampleController@callbackAccess');
 $api = app('Dingo\Api\Routing\Router');
 $api->version('v1', function($api){
 
-	$api->group(['prefix'=>'oauth'], function($api){
-		$api->post('token','\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
-	});
+	// $api->group(['prefix'=>'oauth'], function($api){
+	// 	$api->post('token','\Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
+	// });
 
 	$api->group(['namespace'=>'App\Http\Controllers', 'middleware'=>['auth:api']],function($api){
 		$api->get('testapi', function () {

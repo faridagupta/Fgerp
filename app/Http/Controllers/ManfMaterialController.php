@@ -7,6 +7,7 @@ use App\Model\ManfMaterialType;
 use App\Model\ManfVendorMaterial;
 use App\Model\ManfBomMaterial;
 use App\Model\ManfMaterialEnter;
+use App\Model\ManfMaterialTypeCreate;
 use Illuminate\Support\Facades\Validator;
 
 class ManfMaterialController extends Controller
@@ -160,7 +161,7 @@ class ManfMaterialController extends Controller
 
     }
 
-    public function getmaterialType(){
+    public function getmaterialNameType(){
 
         $data = ManfMaterialDetail::getMaterialNameType();
 
@@ -202,6 +203,28 @@ class ManfMaterialController extends Controller
              ]);
         }
     }
+ 
+    public function getMaterialType(){
+        $data = ManfMaterialDetail::getMaterialType();
+
+        if(!empty($data)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'=> 'success',
+                'result' => 
+                  [$data]                 
+             ]);
+        }
+        else
+        {
+             return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => 'Material Type Not Found'
+             ]);
+        }
+    }
+
 
     public function getMaterialComposition(){
         $data = ManfMaterialDetail::getMaterialCompositions();
@@ -300,6 +323,102 @@ class ManfMaterialController extends Controller
         
     }
     
+    public function materialCodeByType(Request $request){
+      
+      $data = json_decode(json_encode($request->input()), true);
+        $validator = Validator::make($data, [
+             "material_type" => "required",
+            ]);
+         
+         if ($validator->fails()) {
+            return response()->json([
+                'status_code'   => 400,
+                'status'        => 'failure',
+                'error'         =>$validator->errors()
+             ]);
+        } 
+       
+        $materialCode = ManfMaterialDetail::getMaterialCodebyType($data['material_type']);
+          
+        if(!empty($materialCode)){
+        return response()->json([
+                'status_code'  => 200,
+                'status'       => 'success',
+                'result'       => 
+                  [$materialCode]                 
+             ]);
+        } else {
+             return response()->json([
+                'status_code'  => 400,
+                'status'       => 'failure',
+                'error'        => 'Material Detail Not Found'
+             ]);
+        }
 
+    }
 
+    public function materialTest(Request $request)
+    {
+        $data = json_decode(json_encode($request->input()), true);
+        $validator = Validator::make($data, [
+             "material_type" => "required",
+             "material_name" => "required",
+             "test_report" => "required"
+            ]);
+         
+         if ($validator->fails()) {
+            return response()->json([
+                'status_code'   => 400,
+                'status'        => 'failure',
+                'error'         =>$validator->errors()
+             ]);
+        } 
+    
+        $updatedtest = ManfMaterialDetail::updateTestReport($data);
+
+        return response()->json([
+                'status_code'  => 200,
+                'status'       => 'success',
+                'result'       => 
+                  [$updatedtest]                 
+             ]);
+    } 
+
+    public function createMaterialType(Request $request){
+        $data = json_decode(json_encode($request->input()), true);
+        //dd($data);
+        $validator = Validator::make($data, [
+             "material_type" => "required",
+            ]);
+         if ($validator->fails()) {
+           return response()->json([
+                'status_code'=> 400,
+                'status'=> 'failure',
+                'error'=>$validator->errors()
+             ]);
+        }
+ 
+        try{
+
+            $ManfVendorMaterialObj =  new ManfMaterialTypeCreate;
+            $ManfVendorMaterialObj -> material_type = $data["material_type"];
+            $ManfVendorMaterialObj -> save();
+          
+         return response()->json([
+                 'status_code'  => 200,
+                 'status'=> 'success',
+                 'result' => [
+                    'message' => 'Material Type Created Succesfully'
+                 ]
+              ]);
+         }
+        catch(\Exception $e){
+              return response()->json([
+                'status_code'  => 400,
+                'status'=> 'failure',
+                'error' => $e->getMessage()   
+            ]);
+         }   
+          }
+    
 }
