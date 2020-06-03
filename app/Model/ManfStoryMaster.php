@@ -3,11 +3,17 @@
 namespace App\Model;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 
 class ManfStoryMaster extends Model
 {
     //
+        use SoftDeletes;
+
     protected $table = "manf_story_master";
+    protected $softDelete = true;
+    
 
     static function getStoryName(){
 
@@ -16,10 +22,14 @@ class ManfStoryMaster extends Model
         $data = array();
         if (!empty($story)) {
             foreach ($story as $value) {
-                $data['story_name'][$value['entity_id']] = $value['story_name'];
+                $data[$value['entity_id']] = $value['story_name'];
             }
         }
 
         return $data;
+    }
+
+    public function styleDetails(){
+        return $this->hasMany('App\Model\ManfProductStyle', 'story_id','entity_id');
     }
 }

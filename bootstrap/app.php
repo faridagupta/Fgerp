@@ -100,6 +100,8 @@ $app->routeMiddleware([
     $app->register(Dingo\Api\Provider\LumenServiceProvider::class);
     $app->alias('cache', \Illuminate\Cache\CacheManager::class);  // if you don't have this already
     $app->register(Spatie\Permission\PermissionServiceProvider::class);
+    // $app->register(Aws\Laravel\AwsServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Load The Application Routes

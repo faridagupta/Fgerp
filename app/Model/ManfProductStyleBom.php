@@ -7,7 +7,7 @@ use DB;
 class ManfProductStyleBom extends Model
 {
     //
-    protected $table = "manf_product_style_bom";
+    protected $table = "manf_bom_master";
     static function getBomId(){
  
 	   $id = DB::getPdo()->lastInsertId();
@@ -21,7 +21,7 @@ class ManfProductStyleBom extends Model
         if (!empty($bom)) {
             foreach ($bom as $value) {
                 //$data['entity_id'][] = $value['entity_id'];
-                $data['bom'][$value['entity_id']] = $value['bom'];
+                $data[$value['entity_id']] = $value['bom'];
             }
         }
 
