@@ -66,7 +66,7 @@ class ManfStyleController extends Controller
     { 
     	$data = $request->input();//json_decode(json_encode($request->input()), true);
 
-         $requirValidation = Utility::requiredValidation($data, ['style_entity_id','style_no','style_name','bom_id','bom_no','story_id','story_no']);
+         $requirValidation = Utility::requiredValidation($data, ['style_entity_id','style_no','style_name','bom_id','bom_no','story_id','story_no','category_id']);
          if($requirValidation)       
             return $requirValidation;
 
@@ -149,40 +149,39 @@ class ManfStyleController extends Controller
             
             return $response;
     }
-    public function getStyleProductionPlan( $style_entity_id = '' ){
-        $data = ProductionPlaning::where('style_entity_id','=', $data['style_entity_id'])->get();
-        if(!empty($data)){
-            $response = Utility::successResponse('',$data);
-            return $response;
-        }
-        else
-        {
-             $response = Utility::failureResponse('Style not found');
-                 return $response;
-        }
-    }
+    // public function getStyleProductionPlan( $style_entity_id = '' ){
+    //     $data = ProductionPlaning::where('style_entity_id','=', $data['style_entity_id'])->get();
+    //     if(!empty($data)){
+    //         $response = Utility::successResponse('',$data);
+    //         return $response;
+    //     }
+    //     else
+    //     {
+    //          $response = Utility::failureResponse('Style not found');
+    //              return $response;
+    //     }
+    // }
     public function updateProductionPlan( Request $request ){
-        $data = $request->input();
+        $data = $request->all();
         $requirValidation = Utility::requiredValidation($data, ['style_no','style_entity_id']);
        if($requirValidation)       
            return $requirValidation;           
-        try{    
-            //$res = ProductionPlaning::where('style_entity_id','=', $data['style_entity_id'])->where('style_no','=', $data['style_no'])->get();
-           
+        try{
             $style_entity_id = $data['style_entity_id'];      
-            $style_no = $data['style_no'];
-            $data['created_by'] = $this->activeUser;
+            //$style_no = $data['style_no'];
             foreach ($data["production_plan"] as $key => $value) {
-                $resarr[] = array(
-                    'planned_qty'=>$value['plannedRationned_qty'],
+                $production_plan_id = $value['production_plan_id'];
+                $resarr = array(
+                    'planned_qty'=>$value['planned_qty'],
                     'launched_date'=>$value['launched_date'],
                     'production_month'=> $value['production_month']
-                    );     
+                    ); 
+ 
+            $updateattr = ProductionPlaning::where('style_entity_id', '=',$style_entity_id)->where('entity_id','=',$production_plan_id)->update($resarr);    
                 }
-            $updateattr = ProductionPlaning::where('style_entity_id', '=',$style_entity_id)->update($resarr);
-            
-            if($response)
-                $this->styleSizeMapping($data);
+           
+            if($updateattr)
+                $this->styleSizeMappingUpdate($data);
             $successResponse = Utility::successResponse('Production Planned Updated Successfully','');
             
             return $successResponse;
@@ -192,8 +191,41 @@ class ManfStyleController extends Controller
               return $excResponse;
          }
     }
+    public function styleSizeMappingUpdate($data){
+        $response='';
+        foreach ($data['production_plan'] as $size_wise_qty) {
+            $production_plan_id = $size_wise_qty['production_plan_id'];
+             $style_entity_id = $data['style_entity_id']; 
+            foreach ($size_wise_qty['size_wise_qty'] as $key => $value) {
+            $plannedRatio = round($value['qty']/$size_wise_qty['planned_qty']*100,2);
+            $sizesData = array('size_id'=> $value['size_id'],'size'=>$value['size'],'planned_qty'=>$value['qty'],'planned_ratio'=>$plannedRatio);
+            }
+            $updateattr = ManfSizeMapping::where('style_entity_id', '=',$style_entity_id)->where('production_plan_id', '=',$production_plan_id)->update($sizesData);  
+        }
+        if($updateattr)
+         $response = Utility::successResponse('Size Assign Successfully');
+        
+        return $response;
+    }
+    public function deleteProductionPlan( $id = ''){
 
+         if($id==""){
+         $response = Utility::failureResponse("Please Pass Production Plan Id");
+         return $response;
+        }
+        $res = ProductionPlaning::where('entity_id',$id)->delete();
 
+        if( $res == 1){
+            $result = ManfSizeMapping::where('production_plan_id', '=',$id)->delete(); 
+         if($result ==1){
+            $response = Utility::successResponse('Production Plans Deleted');
+            return $response;
+            }else 
+            $response = Utility::failureResponse("Production Plans Not Deleted");
+            return $response;
+        }
+        
+    }
    public function assignAttributes(Request $request){
         $data = $request->input();
         
@@ -279,7 +311,17 @@ class ManfStyleController extends Controller
                      })->skip($data['skip'])->limit($data['limit'])->orderBy($data['sortcolumn'], $data['sortorder'])->get();
 
 
-        return $storyList;
+        //return $storyList;
+
+        if(!empty($storyList)){
+            $response = Utility::successResponse('',$storyList);
+            return $response;
+        }
+        else
+        {
+             $response = Utility::failureResponse('Style not found');
+                 return $response;
+        }
     }
 
     //Delete Story
@@ -367,7 +409,7 @@ class ManfStyleController extends Controller
         if(!isset($data['limit']))
             $data['limit'] = 10;
  
-        $Styledata = ManfStyleMaster::with('children')->with('details')
+        $Styledata['styles'] = ManfStyleMaster::with('children')->with('production_plan')
         ->where('manf_style_master.is_active', '=',1)
         ->where('manf_style_master.is_deleted', '=',0)
         ->where(function($query) use ($style,$data)  {
@@ -378,7 +420,7 @@ class ManfStyleController extends Controller
             }
             
          })->skip($data['skip'])->limit($data['limit'])->orderBy($data['sortcolumn'], $data['sortorder'])->get();
-       
+       $Styledata['total']  = ManfStyleMaster::count();
         // return $style;
         // $data = ManfProductStyle::getStyleLists($style);
         if(!empty($Styledata)){
@@ -394,7 +436,7 @@ class ManfStyleController extends Controller
             $response = Utility::failureResponse("Please pass style");
              return $response;
          }
-          $data['style_details'] = ManfStyleMaster::with('children')->with('details')
+          $data['style_details'] = ManfStyleMaster::with('children')->with('production_plan')
         ->where('manf_style_master.is_active', '=',1)
         ->where('manf_style_master.is_deleted', '=',0)
          ->where(function($query) use ($styleNo)  {

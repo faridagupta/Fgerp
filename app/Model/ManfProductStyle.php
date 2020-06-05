@@ -8,7 +8,7 @@ class ManfProductStyle extends Model
 {
     protected $table        = "manf_product_style";
     protected $primaryKey   = 'entity_id';
-    protected $fillable     = ['style_no', 'style_entity_id','style_type','created_by','style_name','bom_id','story_id','story_no','bom_no','updated_by','category','sub_category','description'];
+    protected $fillable     = ['style_no', 'style_entity_id','style_type','created_by','style_name','bom_id','story_id','story_no','bom_no','updated_by','category','sub_category','description','category_id'];
            
 
     // static function getStyle()

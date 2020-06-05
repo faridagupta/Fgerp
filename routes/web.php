@@ -16,10 +16,7 @@ $app->get('/', function () use ($app) {
     return $app->version();
 });
 
-$app->get('test', function () {
-	echo "hello1 ";
-    //return 'Hello World'; 
-});
+$app->post('/update-style-production-plans', 'ManfControllers\ManfStyleController@updateProductionPlan');
 
 
 $app->post('postlogin', 'ExampleController@postLogin');
@@ -78,10 +75,11 @@ $app->post('/save-style-image', 'ManfControllers\manufacturing-styleController@s
     
     $app->patch('/create-style-details/{styleid}', 'ManfControllers\ManfStyleController@UpdatemanufacturingStyle');
     $app->post('/style-production-plan', 'ManfControllers\ManfStyleController@createProductionPlan');
-    $app->put('/update-style-production-plans', 'ManfControllers\ManfStyleController@updateProductionPlan');
+    // $app->post('/update-style-production-plans', 'ManfControllers\ManfStyleController@updateProductionPlan');
     $app->post('/style-attribute-assign', 'ManfControllers\ManfStyleController@assignAttributes');
     $app->put('/update-style-description','ManfControllers\ManfStyleController@updateStyleAttribute');
     $app->delete('/delete-style[/{styleid}]','ManfControllers\ManfStyleController@deleteStyle');
+     $app->delete('/delete-production-plan[/{prodid}]','ManfControllers\ManfStyleController@deleteProductionPlan');
 
     $app->group(['middleware' => ['role:Admin']], function ($app) {
 

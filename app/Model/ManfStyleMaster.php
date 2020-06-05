@@ -41,7 +41,7 @@ class ManfStyleMaster extends Model
 	    return $this->belongsTo('App\Model\ManfStyleMaster', 'entity_id');
 	}
 
-    public function details()
+    public function production_plan()
     {
         return $this->hasMany('App\Model\ManfStyleProductionDetails', 'style_entity_id', 'entity_id');
     }
